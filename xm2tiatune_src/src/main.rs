@@ -15,10 +15,15 @@ const PRGM_VERSION: &'static str = env!("CARGO_PKG_VERSION");
 fn main() {
     println!("xm2tiatune converter {}", PRGM_VERSION);
 
-    let filename = match env::args().nth(1) {
-        Some(arg) => arg,
-        None => "music.xm".to_string(),
-    };
+    let args: Vec<String> = env::args().collect();
+    let mut filename = "music.xm";
+    if args.len() == 0 || args[1] != "" {
+        filename = &args[1];
+    }
+
+    if std::path::Path::new(filename).exists() == false {
+        panic!("xm file does not exist");
+    }
 
     let xm = match xmkit::XModule::parse_file(&Path::new(&filename)) {
         Err(e) => panic!("{}", e.to_string()),
